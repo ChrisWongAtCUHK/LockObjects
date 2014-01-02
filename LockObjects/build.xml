@@ -14,6 +14,9 @@
 		<property name="ref-dir"		value="ref"/>
 		<property name="resource-dir"	value="resource"/>
 		<property name="src-dir"		value="src"/>
+		
+		<!-- Default milliseconds value -->
+		<property name="ms" value="10" />
 	</target>
 
 	<!-- Necessary checking -->
@@ -73,6 +76,7 @@
 	<!-- Run ${main-class} independently -->
 	<target name="run" depends="compile">
         <java fork="true" classname="${main-class}" classpath="${base-dir}" >
+        	<arg value="${ms}" />
         </java>
     </target>
 	
@@ -81,9 +85,10 @@
 	<!-- Run ${main-class} by jar -->
 	<target name="jar" depends="build">
 		<java fork="true" failonerror="true" classname="${main-class}">
-			 <classpath>
+			<classpath>
 			 	<pathelement location="deploy/${project-name}.jar"/>
-			 </classpath>
+			</classpath>
+			<arg value="${ms}" />
 		</java>
     </target>
 	<!-- Run by jar -->
@@ -91,7 +96,11 @@
 	<!-- Help menu -->
 	<target name="help" description="help information" depends="check">
 		<echo>Sample cmd: ant run</echo>
+		<echo>Sample cmd: ant run -Dms=1000</echo>
+		<echo>          : alias as java -cp bin ${main-class} 1000</echo>
 		<echo>Sample cmd: ant jar</echo>
+		<echo>Sample cmd: ant jar -Dms=1000</echo>
+		<echo>          : alias as java -jar deploy/${project-name}.jar 1000</echo>
 		<echo>Generating javadoc cmd: ant doc</echo>
 		<echo>                      : alias as -- javadoc -sourcepath src -d doc -author oracle.concurrency.newlocks</echo>
 		<echo>Sample cmd: ant help</echo>

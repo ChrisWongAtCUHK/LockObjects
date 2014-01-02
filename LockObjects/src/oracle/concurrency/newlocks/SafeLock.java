@@ -102,10 +102,12 @@ public class SafeLock {
 	static class BowLoop implements Runnable{
 		private Friend bower;
 		private Friend bowee;
+		private int millisec;
 		
-		public BowLoop(Friend bower, Friend bowee){
+		public BowLoop(Friend bower, Friend bowee, int millisec){
 			this.bower = bower;
 			this.bowee = bowee;
+			this.millisec = millisec;
 		}
 		
 		@Override
@@ -114,11 +116,10 @@ public class SafeLock {
 			
 			for(;;){
 				try {
-					Thread.sleep(random.nextInt(10));
+					Thread.sleep(random.nextInt(millisec));
 				} catch (InterruptedException exception){}
 				bowee.bow(bower);
 			}
-			
 		}
 		
 	}
@@ -129,11 +130,22 @@ public class SafeLock {
 	 * @param args
 	 */
 	public static void main(String[] args) {
+		int millisec = 10;
+		
+		if(args.length > 0){
+			try{
+				millisec = Integer.valueOf(args[0]).intValue();
+			} catch(NumberFormatException exception){
+				out.format("%s is not integer.%n", args[0]);
+				return;
+			}
+		}
+		
 		final Friend alphonse = new Friend("Alphonse");
 		final Friend gaston = new Friend("Gaston");
 		
-		new Thread(new BowLoop(alphonse, gaston)).start();
-		new Thread(new BowLoop(gaston, alphonse)).start();
+		new Thread(new BowLoop(alphonse, gaston, millisec)).start();
+		new Thread(new BowLoop(gaston, alphonse, millisec)).start();
 	}
 
 }
